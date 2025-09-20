@@ -1,0 +1,75 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id         Int      @id @default(autoincrement())
+  email      String   @unique
+  role       String   // "student" | "company" | "admin"
+  createdAt  DateTime @default(now())
+  student    Student?
+  company    Company?
+}
+
+model Company {
+  id         Int      @id @default(autoincrement())
+  name       String
+  cin        String   @unique           
+  email      String   @unique
+  phone      String?
+  address    String?
+  userId     Int?     @unique
+  user       User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  internships Internship[]
+}
+
+model Student {
+  id         Int      @id @default(autoincrement())
+  firstName  String
+  lastName   String?
+  email      String   @unique
+  phone      String?
+  resumeUrl  String?    
+  userId     Int?       @unique
+  user       User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  applications Application[]
+}
+
+model Internship {
+  id          Int      @id @default(autoincrement())
+  companyId   Int
+  title       String
+  description String
+  location    String?
+  stipend     Float?
+  startDate   DateTime?
+  endDate     DateTime?
+  postedAt    DateTime @default(now())
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  applications Application[]
+}
+
+model Application {
+  id           Int      @id @default(autoincrement())
+  internshipId Int
+  studentId    Int
+  status       String   @default("pending") // pending|accepted|rejected
+  appliedAt    DateTime @default(now())
+  internship   Internship @relation(fields: [internshipId], references: [id], onDelete: Cascade)
+  student      Student    @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([internshipId, studentId])
+}
