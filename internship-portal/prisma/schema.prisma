@@ -53,6 +53,7 @@ model Internship {
   companyId   Int
   title       String
   description String
+  skills      String[]
   location    String?
   stipend     Float?
   startDate   DateTime?
