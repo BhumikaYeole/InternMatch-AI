@@ -6,10 +6,9 @@ import Link from "next/link";
 export default function Hero() {
   return (
     <section className="bg-black text-green-400 px-4 sm:px-6 md:px-20 py-20">
-      {/* Responsive flex layout: stack on mobile, row on desktop */}
+
       <div className="flex flex-col lg:flex-row gap-12 items-start">
         
-        {/* Left Column */}
         <div className="w-full lg:w-1/2">
           {/* Badge */}
           <div className="mb-4">
